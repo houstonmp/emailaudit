@@ -5,7 +5,7 @@ export type RecipientsBadgeProps = {
   numTruncated: number
 } & Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'>
 
-function RecipientsBadge({ numTruncated, ...rest }: RecipientsBadgeProps) {
+export function RecipientsBadge({ numTruncated, ...rest }: RecipientsBadgeProps) {
   return (
     <span {...rest} data-testid="badge">
       +{numTruncated}

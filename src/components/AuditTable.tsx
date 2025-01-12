@@ -34,7 +34,7 @@ function AuditTable({ emails, ...rest }: AuditTableProps) {
             <tr key={id}>
               <td>{from}</td>
               <td data-testid={id}>
-                <RecipientsDisplay recipients={recipients} />
+                <RecipientsDisplay tableId={id} recipients={recipients} />
               </td>
               <td>{subject}</td>
               <RightAlignedCell>
