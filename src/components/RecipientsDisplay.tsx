@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import RecipientsBadge from "./RecipientsBadge"
-import styled from 'styled-components'
 
 export interface RecipientProps {
     recipients: string[],
@@ -32,42 +31,30 @@ export default function RecipientsDisplay({ recipients }: RecipientProps) {
             const tdElement = textRef.current.parentNode as HTMLElement | null;
             const badgeElement = badgeRef.current as HTMLElement | null;
             if (tdElement && badgeElement) {
-                setTdWidth(tdElement.offsetWidth);
+                setTdWidth(tdElement.clientWidth - parseInt(window.getComputedStyle(tdElement).paddingLeft) - parseInt(window.getComputedStyle(tdElement).paddingRight));
                 setBadgeWidth(badgeElement.offsetWidth)
-                console.log("Badge", badgeElement.offsetWidth)
+                console.log("padding", parseInt(tdElement.style.paddingLeft))
             }
         }
 
+        console.log("Beginning Check...")
         const text = recipients.reduce((accumulator: string, currentValue: string, currentIndex: number) => {
             const accNum = getTextSize(accumulator);
-            const currentNum = getTextSize(currentValue);
+            const currentNum = getTextSize(currentValue + '...');
 
             if (currentIndex === 0) {
                 return currentValue;
             } else if (accNum && currentNum) {
-                const condition = ((accNum + currentNum) / (tdWidth - (accNum / (tdWidth - badgeWidth))) < 1);
-                console.log("Condition", (accNum + currentNum) / (tdWidth - (accNum / (tdWidth - badgeWidth))), condition)
-                return condition ? accumulator + ", " + currentValue : accumulator;
+                const textWidth = ((accNum + currentNum) / (tdWidth - badgeWidth))
+                const condition = textWidth < 1
+                console.log("Condition", accumulator + currentValue, ((accNum + currentNum) / (tdWidth - badgeWidth)), condition)
+                return condition ? (accumulator + ", " + currentValue) : accumulator;
             }
-
+            // console.log(accNum, currentNum, "No accNum or currentNum")
             return accumulator;
         }, '');
 
         setTdText(text)
-
-        //         {recipients.map((el: string, i: number) => {
-        //     if (i + 1 === recipients.length) {
-        //         const textNum = getTextSize(el);
-        //         // if (textNum) console.log(el, (tdWidth && (textNum / (tdWidth - badgeWidth))))
-        //         return el
-        //     }
-        //     else {
-        //         const textNum = getTextSize(el);
-        //         if (textNum && (tdWidth && (0 < (textNum / (tdWidth - badgeWidth))))) {
-        //             return el + ', '
-        //         }
-        //     }
-        // })}
 
     }, [tdWidth])
 
@@ -75,7 +62,7 @@ export default function RecipientsDisplay({ recipients }: RecipientProps) {
         <span>
             {tdText}
         </span>
-        <span ref={badgeRef}>{recipients.length > 1 && <RecipientsBadge numTruncated={recipients.length - 1}></RecipientsBadge>}
+        <span style={{ float: 'right' }} ref={badgeRef}>{recipients.length > 1 && <RecipientsBadge numTruncated={recipients.length - 1}></RecipientsBadge>}
         </span>
     </span>)
 }
